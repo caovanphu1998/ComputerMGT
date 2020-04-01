@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <ProjectGuid>{13BAD0D4-BBE5-4F5F-8C1E-6A0C56EBD97D}</ProjectGuid>
+        <AssemblyName>ComputerMGT.IoC</AssemblyName>
+        <RootNamespace>ComputerMGT.IoC</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ComputerMGT.Application\ComputerMGT.Application.csproj" />
+    </ItemGroup>
+
+</Project>

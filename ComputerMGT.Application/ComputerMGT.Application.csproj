@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <ProjectGuid>{52EF5B10-D012-418F-AF72-595B25FB68D5}</ProjectGuid>
+        <AssemblyName>ComputerMGT.Application</AssemblyName>
+        <RootNamespace>ComputerMGT.Application</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.23" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ComputerMGT.Domain\ComputerMGT.Domain.csproj" />
+      <ProjectReference Include="..\ComputerMGT.Data\ComputerMGT.Data.csproj" />
+    </ItemGroup>
+
+</Project>
