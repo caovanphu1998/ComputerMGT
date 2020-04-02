@@ -22,9 +22,15 @@ namespace ComputerMGT.IoC
 
             // Application
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProductService, ProductService>();
 
             //// Data- Repo
             services.AddScoped<IRepository<TblUser>, Repository<TblUser>>();
+            services.AddScoped<IRepository<TblProduct>, Repository<TblProduct>>();
+            services.AddScoped<IRepository<TblOrderDetail>, Repository<TblOrderDetail>>();
+            services.AddScoped<IRepository<TblOrder>, Repository<TblOrder>>();
+            services.AddScoped<IRepository<TblCategory>, Repository<TblCategory>>();
+            services.AddScoped<IRepository<TblCart>, Repository<TblCart>>();
 
 
             // Infra - Data
