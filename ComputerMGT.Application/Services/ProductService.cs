@@ -16,7 +16,12 @@ namespace ComputerMGT.Application.Services
         private readonly IRepository<TblProduct> _productRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        #region Contructor
+        #region Contructor        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductService"/> class.
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work.</param>
+        /// <param name="productRepository">The product repository.</param>
         public ProductService(IUnitOfWork unitOfWork
             , IRepository<TblProduct> productRepository)
         {
@@ -69,6 +74,63 @@ namespace ComputerMGT.Application.Services
                 Name = query.Name,
                 Price = query.Price
             };
+        }
+        #endregion
+
+        #region Add Product        
+        /// <summary>
+        /// Adds the product.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public async Task<bool> AddProduct(DetailProductModel model)
+        {
+            _productRepository.Insert(new TblProduct
+            {
+                ProductId = model.ProductId,
+                CategoryId = model.CategoryId,
+                Description = model.Description,
+                Name = model.Name,
+                Price = model.Price,
+                ImageLink = model.ImageLink
+            });
+            await _unitOfWork.CommitAsync();
+            return true;
+        }
+        #endregion
+
+        #region Update Product        
+        /// <summary>
+        /// Updates the product.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public async Task<bool> UpdateProduct(DetailProductModel model)
+        {
+            var query = _productRepository.GetById(model.ProductId);
+            query.CategoryId = model.CategoryId;
+            query.Description = model.Description;
+            query.Name = model.Name;
+            query.Price = model.Price;
+            query.ImageLink = model.ImageLink;
+            _productRepository.Update(query);
+            await _unitOfWork.CommitAsync();
+            return true;
+        }
+        #endregion
+
+        #region Delete Product        
+        /// <summary>
+        /// Deletes the product.
+        /// </summary>
+        /// <param name="ProductId">The product identifier.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        public async Task<bool> DeleteProduct(Guid ProductId)
+        {
+            var query = _productRepository.GetById(ProductId);
+            _productRepository.Delete(query);
+            await _unitOfWork.CommitAsync();
+            return true;
         }
         #endregion
     }

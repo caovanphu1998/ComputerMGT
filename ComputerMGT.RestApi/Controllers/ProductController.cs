@@ -66,5 +66,48 @@ namespace ComputerMGT.RestApi.Controllers
                 .build();
         }
         #endregion
+
+        #region Add Product        
+        /// <summary>
+        /// Adds the product.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        [HttpPost]
+        [Route("/api/product")]
+        public async Task AddProduct([FromBody] DetailProductModel model)
+        {
+            await _productService.AddProduct(model);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+        }
+        #endregion
+
+        #region Edit Product        
+        /// <summary>
+        /// Edit the product.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        [HttpPut]
+        [Route("/api/product")]
+        public async Task EditProduct([FromBody] DetailProductModel model)
+        {
+            await _productService.UpdateProduct(model);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+        }
+        #endregion
+
+
+        #region Delete Product                
+        /// <summary>
+        /// Delete the product.
+        /// </summary>
+        /// <param name="ProductId">The product identifier.</param>
+        [HttpDelete]
+        [Route("/api/product")]
+        public async Task DeleteProduct(Guid ProductId)
+        {
+            await _productService.DeleteProduct(ProductId);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+        }
+        #endregion
     }
 }

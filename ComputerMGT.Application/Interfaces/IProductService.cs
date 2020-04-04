@@ -8,13 +8,16 @@ namespace ComputerMGT.Application.Interfaces
 {
     public interface IProductService
     {
-        /// <summary>
-        /// Search Product
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         Task<List<SearchResultProductModel>> SearchProduct(ProductSearchModel model);
 
         Task<DetailProductModel> GetProductDetail(Guid Id);
+
+        Task<bool> AddProduct(DetailProductModel model);
+
+        Task<bool> UpdateProduct(DetailProductModel model);
+
+        Task<bool> DeleteProduct(Guid ProductId);
+
+
     }
 }

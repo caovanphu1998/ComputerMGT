@@ -23,6 +23,9 @@ namespace ComputerMGT.IoC
             // Application
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IOrderDetailService, OrderDetailService>();
+            services.AddTransient<IOrderService, OrderService>();
 
             //// Data- Repo
             services.AddScoped<IRepository<TblUser>, Repository<TblUser>>();
