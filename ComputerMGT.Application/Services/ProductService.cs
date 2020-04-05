@@ -128,7 +128,7 @@ namespace ComputerMGT.Application.Services
         public async Task<bool> DeleteProduct(Guid ProductId)
         {
             var query = _productRepository.GetById(ProductId);
-            _productRepository.Delete(query);
+            _productRepository.Delete(query.ProductId);
             await _unitOfWork.CommitAsync();
             return true;
         }

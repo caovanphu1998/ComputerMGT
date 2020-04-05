@@ -3,7 +3,9 @@ using ComputerMGT.Application.ViewModels;
 using ComputerMGT.Data.Interfaces;
 using ComputerMGT.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace ComputerMGT.Application.Services
@@ -11,7 +13,8 @@ namespace ComputerMGT.Application.Services
     public class CartService : ICartService
     {
         private readonly IRepository<TblCart> _cartRepository;
-        private readonly ProductService _productService;
+        private readonly IRepository<TblProduct> _productRepository;
+        private readonly IProductService _productService;
         private readonly IUnitOfWork _unitOfWork;
 
         #region Contructor        
@@ -22,11 +25,14 @@ namespace ComputerMGT.Application.Services
         /// <param name="cartRepository">The cart repository.</param>
         public CartService(IUnitOfWork unitOfWork
             , IRepository<TblCart> cartRepository
-            , ProductService productService)
+            , IRepository<TblProduct> productRepository
+            , IProductService productService
+            )
         {
             _unitOfWork = unitOfWork;
             _cartRepository = cartRepository;
             _productService = productService;
+            _productRepository = productRepository;
         }
         #endregion
 
@@ -67,10 +73,43 @@ namespace ComputerMGT.Application.Services
         public async Task<bool> DeleteCart(Guid UserId)
         {
             var list = _cartRepository.GetManyAsNoTracking(x => x.UserId == UserId).ToList();
-            _cartRepository.DeleteRange(list);
+            foreach(TblCart a in list)
+            {
+                _cartRepository.Delete(a.CartId);
+            }
             await _unitOfWork.CommitAsync();
             return true;
         }
 
+        public async Task<List<CartModel>> getCart(Guid UserId)
+        {
+            var query = _cartRepository.GetManyAsNoTracking(x => x.UserId == UserId)
+                .Join(_productRepository.GetAllAsNoTracking(), x => x.ProductId, y => y.ProductId, (x, y) => new CartModel
+                {
+                    CartId = x.CartId,
+                    Price = y.Price,
+                    ProductId = x.ProductId,
+                    ProductName = y.Name,
+                    Quantity = x.Quantity
+                }).ToList();
+            return query;
+        }
+
+        public async Task<bool> RemoveProduct(Guid CartId)
+        {
+            var query = _cartRepository.GetById(CartId);
+            _cartRepository.Delete(query.ProductId);
+            await _unitOfWork.CommitAsync();
+            return true;
+        }
+
+        public async Task<bool> changeQuantity(ChangeQuantityModel model)
+        {
+            var query = _cartRepository.GetById(model.CartId);
+            query.Quantity = model.quantity;
+            _cartRepository.Update(query);
+            await _unitOfWork.CommitAsync();
+            return true;
+        }
     }
 }

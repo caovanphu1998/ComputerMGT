@@ -1,10 +1,10 @@
 ﻿using ComputerMGT.Application.Interfaces;
+using ComputerMGT.Application.ViewModels;
 using ComputerMGT.Data.Interfaces;
 using ComputerMGT.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ComputerMGT.Application.Services
@@ -13,8 +13,8 @@ namespace ComputerMGT.Application.Services
     {
         private readonly IRepository<TblOrder> _orderRepository;
         private readonly IRepository<TblCart> _cartRepository;
-        private readonly CartService _cartService;
-        private readonly OrderDetailService _orderDetailService;
+        private readonly ICartService _cartService;
+        private readonly IOrderDetailService _orderDetailService;
         private readonly IUnitOfWork _unitOfWork;
 
         #region Contructor                        
@@ -28,8 +28,8 @@ namespace ComputerMGT.Application.Services
         public OrderService(IUnitOfWork unitOfWork
             , IRepository<TblOrder> orderRepository
             , IRepository<TblCart> cartRepository
-            , CartService cartService
-            , OrderDetailService orderDetailService)
+            , ICartService cartService
+            , IOrderDetailService orderDetailService)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
@@ -45,23 +45,40 @@ namespace ComputerMGT.Application.Services
         /// </summary>
         /// <param name="UserId">The user identifier.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public async Task<bool> CreateOder(Guid UserId)
+        public async Task<bool> CreateOder(CreateOrderModel model)
         {
             var order = _orderRepository.Insert(new TblOrder
             {
                 OrderId = Guid.NewGuid(),
                 DateCreate = DateTime.Now.ToFileTime(),
-                Total = await _cartService.TotalMoney(UserId),
-                UserId = UserId,
+                Total = await _cartService.TotalMoney(model.UserId),
+                UserId = model.UserId,
             });
-            var query = _cartRepository.GetManyAsNoTracking(x => x.UserId == UserId);
+            var query = _cartRepository.GetManyAsNoTracking(x => x.UserId == model.UserId);
             foreach (TblCart element in query.ToList())
             {
                 await _orderDetailService.CreateOrderDetail(order.Entity.OrderId, element.Quantity, element.ProductId);
             }
-            await _cartService.DeleteCart(UserId);
+            await _cartService.DeleteCart(model.UserId);
             await _unitOfWork.CommitAsync();
             return true;
+        }
+        #endregion
+
+        #region get order        
+        /// <summary>
+        /// Getalls the order.
+        /// </summary>
+        /// <returns>List&lt;OrderReturnModel&gt;.</returns>
+        public async Task<List<OrderReturnModel>> getallOrder()
+        {
+            return _orderRepository.GetAllAsNoTracking().Select(x=>new OrderReturnModel
+            {
+                OrderId=x.OrderId,
+                Date=x.DateCreate,
+                Total=x.Total,
+                UserId =x.UserId,
+            }).ToList();
         }
         #endregion
     }

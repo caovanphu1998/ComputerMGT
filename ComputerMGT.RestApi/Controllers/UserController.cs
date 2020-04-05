@@ -58,7 +58,7 @@ namespace ComputerMGT.RestApi.Controllers
         /// <param name="model">The model.</param>
         /// <returns>ResponseModel&lt;UserDetailModel&gt;.</returns>
         [HttpPut]
-        [Route("/api/users/login")]
+        [Route("/api/userlogin")]
         public async Task<ResponseModel<UserDetailModel>> Login([FromBody] LoginModel model)
         {
             var result = await _userService.Login(model);

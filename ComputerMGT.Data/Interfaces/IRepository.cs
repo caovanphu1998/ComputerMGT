@@ -76,10 +76,10 @@ namespace ComputerMGT.Data.Interfaces
 
 
         /// <summary>
-        /// Deletes the specified entity.
+        /// Deletes the specified identifier.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        void Delete(T entity);
+        /// <param name="id">The identifier.</param>
+        void Delete(Guid id);
 
         /// <summary>
         /// Deletes a range of entities.

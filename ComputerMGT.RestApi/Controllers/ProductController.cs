@@ -95,7 +95,6 @@ namespace ComputerMGT.RestApi.Controllers
         }
         #endregion
 
-
         #region Delete Product                
         /// <summary>
         /// Delete the product.

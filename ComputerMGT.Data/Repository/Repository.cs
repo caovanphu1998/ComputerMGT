@@ -26,9 +26,9 @@ namespace ComputerMGT.Data.Repository
             _unitOfWork.Context.Set<T>().AddRange(entities);
         }
 
-        public void Delete(T entity)
+        public void Delete(Guid ids)
         {
-            T existing = _unitOfWork.Context.Set<T>().Find(entity);
+            T existing = _unitOfWork.Context.Set<T>().Find(ids);
             if (existing != null) _unitOfWork.Context.Set<T>().Remove(existing);
         }
         
