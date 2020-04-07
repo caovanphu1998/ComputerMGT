@@ -13,6 +13,7 @@ namespace ComputerMGT.Application.Services
     {
         private readonly IRepository<TblOrder> _orderRepository;
         private readonly IRepository<TblCart> _cartRepository;
+        private readonly IRepository<TblUser> _userRepository;
         private readonly ICartService _cartService;
         private readonly IOrderDetailService _orderDetailService;
         private readonly IUnitOfWork _unitOfWork;
@@ -28,6 +29,7 @@ namespace ComputerMGT.Application.Services
         public OrderService(IUnitOfWork unitOfWork
             , IRepository<TblOrder> orderRepository
             , IRepository<TblCart> cartRepository
+            , IRepository<TblUser> userRepository
             , ICartService cartService
             , IOrderDetailService orderDetailService)
         {
@@ -36,6 +38,7 @@ namespace ComputerMGT.Application.Services
             _cartRepository = cartRepository;
             _cartService = cartService;
             _orderDetailService = orderDetailService;
+            _userRepository = userRepository;
         }
         #endregion
 
@@ -50,7 +53,7 @@ namespace ComputerMGT.Application.Services
             var order = _orderRepository.Insert(new TblOrder
             {
                 OrderId = Guid.NewGuid(),
-                DateCreate = DateTime.Now.ToFileTime(),
+                DateCreate = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds,
                 Total = await _cartService.TotalMoney(model.UserId),
                 UserId = model.UserId,
             });
@@ -72,13 +75,15 @@ namespace ComputerMGT.Application.Services
         /// <returns>List&lt;OrderReturnModel&gt;.</returns>
         public async Task<List<OrderReturnModel>> getallOrder()
         {
-            return _orderRepository.GetAllAsNoTracking().Select(x=>new OrderReturnModel
-            {
-                OrderId=x.OrderId,
-                Date=x.DateCreate,
-                Total=x.Total,
-                UserId =x.UserId,
-            }).ToList();
+            return _orderRepository.GetAllAsNoTracking().Join(_userRepository.GetAllAsNoTracking()
+                , x => x.UserId, y => y.UserId, (x, y) => new OrderReturnModel
+                {
+                    OrderId = x.OrderId,
+                    Date = x.DateCreate,
+                    Total = x.Total,
+                    UserId = x.UserId,
+                    UserName = y.Name
+                }).ToList();
         }
         #endregion
     }

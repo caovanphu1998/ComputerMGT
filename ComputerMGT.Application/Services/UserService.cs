@@ -39,7 +39,7 @@ namespace ComputerMGT.Application.Services
             if (!ValidateUtils.IsMail(model.Email)) throw new FormatException("Email address invalid");
             if (model.Password != model.Repassword) throw new FormatException("Wrong Repass");
             var query = _userRepository.GetManyAsNoTracking(x => x.Email.Equals(model.Email));
-            if (query.ToList().Count == 0) throw new FormatException("Email is existed");
+            if (query.ToList().Count > 0) throw new FormatException("Email is existed");
             var user = _userRepository.Insert(new TblUser
             {
                 UserId = Guid.NewGuid(),

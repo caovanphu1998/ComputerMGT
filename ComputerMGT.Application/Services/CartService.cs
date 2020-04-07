@@ -96,9 +96,9 @@ namespace ComputerMGT.Application.Services
         }
 
         public async Task<bool> RemoveProduct(Guid CartId)
-        {
+            {
             var query = _cartRepository.GetById(CartId);
-            _cartRepository.Delete(query.ProductId);
+            _cartRepository.Delete(query.CartId);
             await _unitOfWork.CommitAsync();
             return true;
         }

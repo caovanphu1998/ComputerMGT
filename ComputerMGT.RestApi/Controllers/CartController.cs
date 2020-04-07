@@ -81,7 +81,7 @@ namespace ComputerMGT.RestApi.Controllers
         /// <param name="CartId">The cart identifier.</param>
         [HttpDelete]
         [Route("/api/cart/removeproduct")]
-        public async Task RemoveProductToCart([FromBody] Guid CartId)
+        public async Task RemoveProductToCart( Guid CartId)
         {
             await _cartService.RemoveProduct(CartId);
             Response.StatusCode = (int)HttpStatusCode.OK;

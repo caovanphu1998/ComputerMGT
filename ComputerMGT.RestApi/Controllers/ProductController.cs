@@ -2,9 +2,12 @@
 using ComputerMGT.Application.SearchModels;
 using ComputerMGT.Application.ViewModels;
 using ComputerMGT.RestApi.ApiResponse;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -16,15 +19,17 @@ namespace ComputerMGT.RestApi.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IHostingEnvironment _host;
 
         #region Constructor        
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductController"/> class.
         /// </summary>
         /// <param name="productService">The product service.</param>
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IHostingEnvironment webHostEnvironment)
         {
             _productService = productService;
+            _host = webHostEnvironment;
         }
         #endregion
 
@@ -74,8 +79,9 @@ namespace ComputerMGT.RestApi.Controllers
         /// <param name="model">The model.</param>
         [HttpPost]
         [Route("/api/product")]
-        public async Task AddProduct([FromBody] DetailProductModel model)
+        public async Task AddProduct([FromBody] UpLoadProductModel model)
         {
+            
             await _productService.AddProduct(model);
             Response.StatusCode = (int)HttpStatusCode.OK;
         }
@@ -88,7 +94,7 @@ namespace ComputerMGT.RestApi.Controllers
         /// <param name="model">The model.</param>
         [HttpPut]
         [Route("/api/product")]
-        public async Task EditProduct([FromBody] DetailProductModel model)
+        public async Task EditProduct([FromBody] UpLoadProductModel model)
         {
             await _productService.UpdateProduct(model);
             Response.StatusCode = (int)HttpStatusCode.OK;
@@ -104,8 +110,41 @@ namespace ComputerMGT.RestApi.Controllers
         [Route("/api/product")]
         public async Task DeleteProduct(Guid ProductId)
         {
-            await _productService.DeleteProduct(ProductId);
+            var result= await _productService.DeleteProduct(ProductId);
             Response.StatusCode = (int)HttpStatusCode.OK;
+        }
+        #endregion
+
+        #region upload file        
+        /// <summary>
+        /// Uploads the file.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns>System.String.</returns>
+        [HttpPost]
+        [Route("/api/productfile")]
+        public async Task<string> UploadFile(IFormFile file)
+        {
+            if (string.IsNullOrWhiteSpace(_host.WebRootPath))
+            {
+                _host.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+            if (file.Length > 0)
+            {
+                if (!Directory.Exists(_host.WebRootPath + "\\image\\"))
+                {
+                    Directory.CreateDirectory(_host.WebRootPath + "\\image\\");
+                }
+                using (FileStream fileStream = System.IO.File.Create(
+                    _host.WebRootPath + "\\image\\" + file.FileName))
+                {
+                    file.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
+            }
+            var link = _host.WebRootPath + "\\image\\" + file.FileName;
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return link;
         }
         #endregion
     }

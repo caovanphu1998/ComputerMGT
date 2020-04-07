@@ -4,6 +4,7 @@ using ComputerMGT.Application.ViewModels;
 using ComputerMGT.Data.Interfaces;
 using ComputerMGT.Domain.Models;
 using ComputerMGT.Domain.Util;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,16 +84,16 @@ namespace ComputerMGT.Application.Services
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public async Task<bool> AddProduct(DetailProductModel model)
+        public async Task<bool> AddProduct(UpLoadProductModel model)
         {
-            _productRepository.Insert(new TblProduct
+            var a = _productRepository.Insert(new TblProduct
             {
                 ProductId = model.ProductId,
                 CategoryId = model.CategoryId,
                 Description = model.Description,
                 Name = model.Name,
                 Price = model.Price,
-                ImageLink = model.ImageLink
+                ImageLink = model.file
             });
             await _unitOfWork.CommitAsync();
             return true;
@@ -105,14 +106,14 @@ namespace ComputerMGT.Application.Services
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public async Task<bool> UpdateProduct(DetailProductModel model)
+        public async Task<bool> UpdateProduct(UpLoadProductModel model)
         {
             var query = _productRepository.GetById(model.ProductId);
             query.CategoryId = model.CategoryId;
             query.Description = model.Description;
             query.Name = model.Name;
             query.Price = model.Price;
-            query.ImageLink = model.ImageLink;
+            query.ImageLink = model.file;
             _productRepository.Update(query);
             await _unitOfWork.CommitAsync();
             return true;
@@ -127,8 +128,7 @@ namespace ComputerMGT.Application.Services
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public async Task<bool> DeleteProduct(Guid ProductId)
         {
-            var query = _productRepository.GetById(ProductId);
-            _productRepository.Delete(query.ProductId);
+             _productRepository.Delete(ProductId);
             await _unitOfWork.CommitAsync();
             return true;
         }

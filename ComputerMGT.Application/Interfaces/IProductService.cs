@@ -1,5 +1,6 @@
 ﻿using ComputerMGT.Application.SearchModels;
 using ComputerMGT.Application.ViewModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,12 +13,10 @@ namespace ComputerMGT.Application.Interfaces
 
         Task<DetailProductModel> GetProductDetail(Guid Id);
 
-        Task<bool> AddProduct(DetailProductModel model);
+        Task<bool> AddProduct(UpLoadProductModel model);
 
-        Task<bool> UpdateProduct(DetailProductModel model);
+        Task<bool> UpdateProduct(UpLoadProductModel model);
 
         Task<bool> DeleteProduct(Guid ProductId);
-
-
     }
 }
